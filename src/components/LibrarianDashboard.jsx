@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { librarianService } from '../services/librarianService';
+import BookCover from './BookCover';
 import './LibrarianDashboard.css';
 
 const LibrarianDashboard = () => {
@@ -103,19 +104,33 @@ const LibrarianDashboard = () => {
           <div className="books-list">
             {books_due_today.map((item) => (
               <div key={item.reservation_id} className="book-card due-today-card">
-                <div className="book-header">
-                  <h4>{item.book.title}</h4>
-                  <span className="due-badge">Due Today</span>
-                </div>
-                <div className="book-details">
-                  <p><strong>Author:</strong> {item.book.author}</p>
-                  <p><strong>Genre:</strong> {item.book.genre}</p>
-                  <p><strong>ISBN:</strong> {item.book.isbn}</p>
-                  <p><strong>Borrowed on:</strong> {formatDate(item.borrowed_on)}</p>
-                </div>
-                <div className="member-info-card">
-                  <p><strong>Member:</strong> {item.member.name}</p>
-                  <p><strong>Email:</strong> {item.member.email_address}</p>
+                <div className="book-content">
+                  <div className="book-cover-section">
+                    <BookCover
+                      isbn={item.book.isbn}
+                      title={item.book.title}
+                      size="M"
+                      width="70px"
+                      height="105px"
+                      className="book-cover-medium"
+                    />
+                  </div>
+                  <div className="book-info">
+                    <div className="book-header">
+                      <h4>{item.book.title}</h4>
+                      <span className="due-badge">Due Today</span>
+                    </div>
+                    <div className="book-details">
+                      <p><strong>Author:</strong> {item.book.author}</p>
+                      <p><strong>Genre:</strong> {item.book.genre}</p>
+                      <p><strong>ISBN:</strong> {item.book.isbn}</p>
+                      <p><strong>Borrowed on:</strong> {formatDate(item.borrowed_on)}</p>
+                    </div>
+                    <div className="member-info-card">
+                      <p><strong>Member:</strong> {item.member.name}</p>
+                      <p><strong>Email:</strong> {item.member.email_address}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -144,14 +159,28 @@ const LibrarianDashboard = () => {
                 <div className="overdue-books-list">
                   {memberData.overdue_books.map((book) => (
                     <div key={book.reservation_id} className="overdue-book-item">
-                      <div className="book-title">{book.book.title}</div>
-                      <div className="book-meta">
-                        <span>by {book.book.author}</span>
-                        <span className="days-overdue">{book.days_overdue} days overdue</span>
-                      </div>
-                      <div className="book-dates">
-                        <span>Borrowed: {formatDate(book.borrowed_on)}</span>
-                        <span>Due: {formatDate(book.due_on)}</span>
+                      <div className="overdue-book-content">
+                        <div className="overdue-book-cover">
+                          <BookCover
+                            isbn={book.book.isbn}
+                            title={book.book.title}
+                            size="S"
+                            width="50px"
+                            height="75px"
+                            className="book-cover-small"
+                          />
+                        </div>
+                        <div className="overdue-book-details">
+                          <div className="book-title">{book.book.title}</div>
+                          <div className="book-meta">
+                            <span>by {book.book.author}</span>
+                            <span className="days-overdue">{book.days_overdue} days overdue</span>
+                          </div>
+                          <div className="book-dates">
+                            <span>Borrowed: {formatDate(book.borrowed_on)}</span>
+                            <span>Due: {formatDate(book.due_on)}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}

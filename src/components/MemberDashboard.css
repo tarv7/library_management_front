@@ -184,6 +184,21 @@
   border-color: rgba(102, 126, 234, 0.2);
 }
 
+.book-content {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.book-cover-section {
+  flex-shrink: 0;
+}
+
+.book-info {
+  flex: 1;
+  min-width: 0;
+}
+
 .overdue-card {
   border-left: 4px solid #dc2626;
   background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
@@ -291,6 +306,16 @@
 
   .books-list {
     grid-template-columns: 1fr;
+  }
+
+  .book-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .book-cover-section {
+    margin-bottom: 1rem;
   }
 
   .book-header {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { memberService } from '../services/memberService';
+import BookCover from './BookCover';
 import './MemberDashboard.css';
 
 const MemberDashboard = () => {
@@ -91,16 +92,30 @@ const MemberDashboard = () => {
           <div className="books-list">
             {overdue_books.map((item) => (
               <div key={item.reservation_id} className="book-card overdue-card">
-                <div className="book-header">
-                  <h4>{item.book.title}</h4>
-                  <span className="overdue-badge">{item.days_overdue} days overdue</span>
-                </div>
-                <div className="book-details">
-                  <p><strong>Author:</strong> {item.book.author}</p>
-                  <p><strong>Genre:</strong> {item.book.genre}</p>
-                  <p><strong>ISBN:</strong> {item.book.isbn}</p>
-                  <p><strong>Borrowed on:</strong> {formatDate(item.borrowed_on)}</p>
-                  <p><strong>Due date:</strong> {formatDate(item.due_on)}</p>
+                <div className="book-content">
+                  <div className="book-cover-section">
+                    <BookCover
+                      isbn={item.book.isbn}
+                      title={item.book.title}
+                      size="M"
+                      width="70px"
+                      height="105px"
+                      className="book-cover-medium"
+                    />
+                  </div>
+                  <div className="book-info">
+                    <div className="book-header">
+                      <h4>{item.book.title}</h4>
+                      <span className="overdue-badge">{item.days_overdue} days overdue</span>
+                    </div>
+                    <div className="book-details">
+                      <p><strong>Author:</strong> {item.book.author}</p>
+                      <p><strong>Genre:</strong> {item.book.genre}</p>
+                      <p><strong>ISBN:</strong> {item.book.isbn}</p>
+                      <p><strong>Borrowed on:</strong> {formatDate(item.borrowed_on)}</p>
+                      <p><strong>Due date:</strong> {formatDate(item.due_on)}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -114,15 +129,29 @@ const MemberDashboard = () => {
           <div className="books-list">
             {borrowed_books.map((item) => (
               <div key={item.reservation_id} className="book-card">
-                <div className="book-header">
-                  <h4>{item.book.title}</h4>
-                </div>
-                <div className="book-details">
-                  <p><strong>Author:</strong> {item.book.author}</p>
-                  <p><strong>Genre:</strong> {item.book.genre}</p>
-                  <p><strong>ISBN:</strong> {item.book.isbn}</p>
-                  <p><strong>Borrowed on:</strong> {formatDate(item.borrowed_on)}</p>
-                  <p><strong>Due date:</strong> {formatDate(item.due_on)}</p>
+                <div className="book-content">
+                  <div className="book-cover-section">
+                    <BookCover
+                      isbn={item.book.isbn}
+                      title={item.book.title}
+                      size="M"
+                      width="70px"
+                      height="105px"
+                      className="book-cover-medium"
+                    />
+                  </div>
+                  <div className="book-info">
+                    <div className="book-header">
+                      <h4>{item.book.title}</h4>
+                    </div>
+                    <div className="book-details">
+                      <p><strong>Author:</strong> {item.book.author}</p>
+                      <p><strong>Genre:</strong> {item.book.genre}</p>
+                      <p><strong>ISBN:</strong> {item.book.isbn}</p>
+                      <p><strong>Borrowed on:</strong> {formatDate(item.borrowed_on)}</p>
+                      <p><strong>Due date:</strong> {formatDate(item.due_on)}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
