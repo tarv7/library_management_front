@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { bookService } from '../services/bookService';
+import BookDetail from './BookDetail';
 import './Books.css';
 
 const Books = () => {
@@ -13,6 +14,7 @@ const Books = () => {
     author: '',
     genre: ''
   });
+  const [selectedBookId, setSelectedBookId] = useState(null);
 
   const genres = [
     { value: '', label: 'All Genres' },
@@ -38,7 +40,6 @@ const Books = () => {
       setLoading(true);
       setError(null);
 
-      // Filtrar apenas valores não vazios
       const activeFilters = Object.entries(customFilters).reduce((acc, [key, value]) => {
         if (value && value.trim() !== '') {
           acc[key] = value.trim();
@@ -78,11 +79,18 @@ const Books = () => {
 
     try {
       await bookService.deleteBook(bookId);
-
       fetchBooks();
     } catch (error) {
       alert(`Error deleting book: ${error.message}`);
     }
+  };
+
+  const handleViewBook = (bookId) => {
+    setSelectedBookId(bookId);
+  };
+
+  const handleCloseBookDetail = () => {
+    setSelectedBookId(null);
   };
 
   const formatGenre = (genre) => {
@@ -207,7 +215,7 @@ const Books = () => {
                     <button
                       className="action-btn view-btn"
                       title="View Details"
-                      onClick={() => alert(`View details for: ${book.title}`)}
+                      onClick={() => handleViewBook(book.id)}
                     >
                       👁️
                     </button>
@@ -240,6 +248,13 @@ const Books = () => {
       <div className="books-summary">
         <p>Showing {books.length} book{books.length !== 1 ? 's' : ''}</p>
       </div>
+
+      {selectedBookId && (
+        <BookDetail
+          bookId={selectedBookId}
+          onClose={handleCloseBookDetail}
+        />
+      )}
     </div>
   );
 };
