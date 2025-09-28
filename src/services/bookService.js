@@ -87,6 +87,37 @@ export const bookService = {
     }
   },
 
+  async updateBook(bookId, bookData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/books/${bookId}`, {
+        method: 'PUT',
+        headers: authService.getAuthHeaders(),
+        mode: 'cors',
+        credentials: 'include',
+        body: JSON.stringify({
+          book: bookData
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          throw {
+            status: 422,
+            errors: data
+          };
+        }
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Book update error:', error);
+      throw error;
+    }
+  },
+
   async deleteBook(bookId) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/books/${bookId}`, {

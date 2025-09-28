@@ -4,7 +4,7 @@ import { bookService } from '../services/bookService';
 import BookCover from './BookCover';
 import './BookDetail.css';
 
-const BookDetail = ({ bookId, onClose }) => {
+const BookDetail = ({ bookId, onClose, onEdit }) => {
   const { user } = useAuth();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -151,7 +151,10 @@ const BookDetail = ({ bookId, onClose }) => {
               <div className="librarian-actions">
                 <button
                   className="btn-primary"
-                  onClick={() => alert(`Edit functionality for: ${book.title}`)}
+                  onClick={() => {
+                    onEdit?.(book);
+                    onClose();
+                  }}
                 >
                   ✏️ Edit Book
                 </button>

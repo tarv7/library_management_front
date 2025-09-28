@@ -65,8 +65,7 @@ const BookForm = ({ onClose, onSuccess, editBook = null }) => {
 
       let result;
       if (isEditing) {
-        // TODO: Implement update book
-        result = { ...editBook, ...bookData };
+        result = await bookService.updateBook(editBook.id, bookData);
       } else {
         result = await bookService.createBook(bookData);
       }

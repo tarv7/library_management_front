@@ -17,6 +17,7 @@ const Books = () => {
   });
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingBook, setEditingBook] = useState(null);
 
   const genres = [
     { value: '', label: 'All Genres' },
@@ -106,8 +107,21 @@ const Books = () => {
   const handleCreateSuccess = (newBook) => {
     fetchBooks();
     setShowCreateForm(false);
-
     alert(`Book "${newBook.title}" created successfully!`);
+  };
+
+  const handleEditBook = (book) => {
+    setEditingBook(book);
+  };
+
+  const handleCloseEditForm = () => {
+    setEditingBook(null);
+  };
+
+  const handleEditSuccess = (updatedBook) => {
+    fetchBooks();
+    setEditingBook(null);
+    alert(`Book "${updatedBook.title}" updated successfully!`);
   };
 
   const formatGenre = (genre) => {
@@ -253,7 +267,7 @@ const Books = () => {
                         <button
                           className="action-btn edit-btn"
                           title="Edit Book"
-                          onClick={() => alert(`Edit: ${book.title}`)}
+                          onClick={() => handleEditBook(book)}
                         >
                           ✏️
                         </button>
@@ -282,6 +296,7 @@ const Books = () => {
         <BookDetail
           bookId={selectedBookId}
           onClose={handleCloseBookDetail}
+          onEdit={handleEditBook}
         />
       )}
 
@@ -289,6 +304,14 @@ const Books = () => {
         <BookForm
           onClose={handleCloseCreateForm}
           onSuccess={handleCreateSuccess}
+        />
+      )}
+
+      {editingBook && (
+        <BookForm
+          editBook={editingBook}
+          onClose={handleCloseEditForm}
+          onSuccess={handleEditSuccess}
         />
       )}
     </div>
