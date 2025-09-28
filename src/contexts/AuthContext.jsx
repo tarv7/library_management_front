@@ -18,8 +18,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = authService.getToken()
-    if (token) {
+    if (token && authService.isTokenValid()) {
+      const userData = authService.getUserFromToken()
+      setUser(userData)
       setIsAuthenticated(true)
+    } else if (token) {
+      authService.logout()
+      setUser(null)
+      setIsAuthenticated(false)
     }
     setIsLoading(false)
   }, [])
@@ -27,7 +33,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await authService.login(email, password)
-      setUser(response.user || { email })
+      const userData = authService.getUserFromToken()
+      console.log('User data from token after login:', userData)
+      setUser(userData)
       setIsAuthenticated(true)
       return response
     } catch (error) {

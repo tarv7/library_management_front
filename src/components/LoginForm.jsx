@@ -56,9 +56,6 @@ const LoginForm = () => {
     try {
       const response = await login(formData.email, formData.password)
 
-      console.log('Login successful:', response)
-      alert('Login successful!')
-
       setFormData({
         email: '',
         password: ''

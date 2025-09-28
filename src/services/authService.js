@@ -1,3 +1,5 @@
+import { jwtDecode } from 'jwt-decode';
+
 const API_BASE_URL = '';
 
 export const authService = {
@@ -99,5 +101,53 @@ export const authService = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
+  },
+
+  getUserFromToken() {
+    const token = this.getToken();
+    if (!token) {
+      console.log('No token found');
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+
+      return {
+        id: decoded.user_id,
+        email: decoded.email_address,
+        name: decoded.name,
+        role: decoded.role,
+        createdAt: decoded.created_at,
+        exp: decoded.exp
+      };
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  },
+
+  isTokenValid() {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const decoded = jwtDecode(token);
+      const now = Math.floor(Date.now() / 1000);
+      return decoded.exp > now;
+    } catch (error) {
+      console.error('Error validating token:', error);
+      return false;
+    }
+  },
+
+  isLibrarian() {
+    const user = this.getUserFromToken();
+    return user?.role === 'librarian';
+  },
+
+  isMember() {
+    const user = this.getUserFromToken();
+    return user?.role === 'member';
   }
 };

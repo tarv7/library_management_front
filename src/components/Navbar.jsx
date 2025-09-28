@@ -23,19 +23,24 @@ const Navbar = () => {
             <li className="nav-item">
               <a href="#" className="nav-link">Books</a>
             </li>
+            {user?.role === 'librarian' && (
+              <li className="nav-item">
+                <a href="#" className="nav-link">Members</a>
+              </li>
+            )}
             <li className="nav-item">
-              <a href="#" className="nav-link">Members</a>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link">Reservations</a>
+              <a href="#" className="nav-link">
+                {user?.role === 'librarian' ? 'Reservations' : 'My Books'}
+              </a>
             </li>
           </ul>
         </div>
 
         <div className="navbar-user">
-          <span className="user-info">
-            Welcome, {user?.email || 'User'}
-          </span>
+          <div className="user-info">
+            <span className="user-name">Welcome, {user?.name || 'User'}</span>
+            <span className="user-role">({user?.role || 'member'})</span>
+          </div>
           <button
             className="logout-button"
             onClick={handleLogout}
