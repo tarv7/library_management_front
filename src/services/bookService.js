@@ -32,5 +32,26 @@ export const bookService = {
       console.error('Books fetch error:', error);
       throw error;
     }
+  },
+
+  async deleteBook(bookId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/books/${bookId}`, {
+        method: 'DELETE',
+        headers: authService.getAuthHeaders(),
+        mode: 'cors',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Book delete error:', error);
+      throw error;
+    }
   }
 };

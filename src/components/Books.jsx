@@ -71,6 +71,20 @@ const Books = () => {
     fetchBooks(clearedFilters);
   };
 
+  const handleDeleteBook = async (bookId, bookTitle) => {
+    if (!window.confirm(`Are you sure you want to delete "${bookTitle}"?`)) {
+      return;
+    }
+
+    try {
+      await bookService.deleteBook(bookId);
+
+      fetchBooks();
+    } catch (error) {
+      alert(`Error deleting book: ${error.message}`);
+    }
+  };
+
   const formatGenre = (genre) => {
     return genre.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
@@ -209,7 +223,7 @@ const Books = () => {
                         <button
                           className="action-btn delete-btn"
                           title="Delete Book"
-                          onClick={() => alert(`Delete: ${book.title}`)}
+                          onClick={() => handleDeleteBook(book.id, book.title)}
                         >
                           🗑️
                         </button>
