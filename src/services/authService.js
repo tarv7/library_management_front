@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 
-const API_BASE_URL = '';
+const API_BASE_URL = 'http://localhost:3000';
 
 export const authService = {
   async login(emailAddress, password) {
