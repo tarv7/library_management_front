@@ -34,6 +34,37 @@ export const bookService = {
     }
   },
 
+  async createBook(bookData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/books`, {
+        method: 'POST',
+        headers: authService.getAuthHeaders(),
+        mode: 'cors',
+        credentials: 'include',
+        body: JSON.stringify({
+          book: bookData
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          throw {
+            status: 422,
+            errors: data
+          };
+        }
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Book create error:', error);
+      throw error;
+    }
+  },
+
   async getBook(bookId) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/books/${bookId}`, {

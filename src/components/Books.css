@@ -42,6 +42,22 @@
   font-size: 1.1rem;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.header-text {
+  text-align: center;
+  flex: 1;
+}
+
+.add-book-btn {
+  flex-shrink: 0;
+}
+
 .books-filters {
   background: white;
   padding: 2rem;

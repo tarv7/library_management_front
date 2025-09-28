@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { bookService } from '../services/bookService';
 import BookDetail from './BookDetail';
+import BookForm from './BookForm';
 import './Books.css';
 
 const Books = () => {
@@ -15,6 +16,7 @@ const Books = () => {
     genre: ''
   });
   const [selectedBookId, setSelectedBookId] = useState(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const genres = [
     { value: '', label: 'All Genres' },
@@ -93,6 +95,21 @@ const Books = () => {
     setSelectedBookId(null);
   };
 
+  const handleCreateBook = () => {
+    setShowCreateForm(true);
+  };
+
+  const handleCloseCreateForm = () => {
+    setShowCreateForm(false);
+  };
+
+  const handleCreateSuccess = (newBook) => {
+    fetchBooks();
+    setShowCreateForm(false);
+
+    alert(`Book "${newBook.title}" created successfully!`);
+  };
+
   const formatGenre = (genre) => {
     return genre.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
@@ -120,8 +137,20 @@ const Books = () => {
   return (
     <div className="books-container">
       <div className="books-header">
-        <h1>📚 Books Library</h1>
-        <p>Browse and manage the book collection</p>
+        <div className="header-content">
+          <div className="header-text">
+            <h1>📚 Books Library</h1>
+            <p>Browse and manage the book collection</p>
+          </div>
+          {user?.role === 'librarian' && (
+            <button
+              className="btn-primary add-book-btn"
+              onClick={handleCreateBook}
+            >
+              ➕ Add New Book
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="books-filters">
@@ -253,6 +282,13 @@ const Books = () => {
         <BookDetail
           bookId={selectedBookId}
           onClose={handleCloseBookDetail}
+        />
+      )}
+
+      {showCreateForm && (
+        <BookForm
+          onClose={handleCloseCreateForm}
+          onSuccess={handleCreateSuccess}
         />
       )}
     </div>
