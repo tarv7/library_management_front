@@ -37,9 +37,9 @@ export const authService = {
     }
   },
 
-  async register(emailAddress, password, confirmPassword) {
+  async register(userData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/register`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,22 +49,25 @@ export const authService = {
         credentials: 'include',
         body: JSON.stringify({
           user: {
-            email_address: emailAddress,
-            password: password,
-            password_confirmation: confirmPassword
+            email_address: userData.email,
+            password: userData.password,
+            password_confirmation: userData.confirmPassword,
+            name: userData.name,
+            role: userData.role
           }
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
 
-      if (data.token) {
-        localStorage.setItem('authToken', data.token);
+      if (!response.ok) {
+        if (response.status === 422) {
+          throw {
+            status: 422,
+            errors: data
+          };
+        }
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
 
       return data;

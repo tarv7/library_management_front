@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 import './AuthForm.css'
 
 const RegisterForm = ({ onSwitchToLogin }) => {
+  const { register } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,6 +13,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
   })
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -69,14 +72,13 @@ const RegisterForm = ({ onSwitchToLogin }) => {
     }
 
     setIsLoading(true)
+    setErrors({})
+    setSuccessMessage('')
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const response = await register(formData)
 
-      const { confirmPassword, ...registerData } = formData
-      console.log('Register:', registerData)
-
-      alert('Registration successful!')
+      setSuccessMessage('Registration successful! You can now login with your credentials.')
 
       setFormData({
         name: '',
@@ -86,13 +88,37 @@ const RegisterForm = ({ onSwitchToLogin }) => {
         role: 'member'
       })
 
-      if (onSwitchToLogin) {
-        onSwitchToLogin()
-      }
+      setTimeout(() => {
+        if (onSwitchToLogin) {
+          onSwitchToLogin()
+        }
+      }, 2000)
 
     } catch (error) {
       console.error('Registration error:', error)
-      alert('Registration failed. Please try again.')
+
+      if (error.status === 422 && error.errors) {
+        const backendErrors = {}
+
+        if (error.errors.email_address) {
+          backendErrors.email = error.errors.email_address[0]
+        }
+        if (error.errors.password) {
+          backendErrors.password = error.errors.password[0]
+        }
+        if (error.errors.name) {
+          backendErrors.name = error.errors.name[0]
+        }
+        if (error.errors.role) {
+          backendErrors.role = error.errors.role[0]
+        }
+
+        setErrors(backendErrors)
+      } else {
+        setErrors({
+          general: error.message || 'Registration failed. Please try again.'
+        })
+      }
     } finally {
       setIsLoading(false)
     }
@@ -100,6 +126,18 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
   return (
     <form onSubmit={handleSubmit} className="auth-form-container">
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
+        </div>
+      )}
+
+      {errors.general && (
+        <div className="error-message general-error">
+          {errors.general}
+        </div>
+      )}
+
       <div className="form-group">
         <label htmlFor="name">Name</label>
         <input
