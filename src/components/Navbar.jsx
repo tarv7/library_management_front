@@ -18,20 +18,13 @@ const Navbar = () => {
         <div className="navbar-menu">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <a href="#" className="nav-link">Dashboard</a>
+              <a href="#dashboard" className="nav-link">Dashboard</a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link">Books</a>
+              <a href="#books" className="nav-link">Books</a>
             </li>
-            {user?.role === 'librarian' && (
-              <li className="nav-item">
-                <a href="#" className="nav-link">Members</a>
-              </li>
-            )}
             <li className="nav-item">
-              <a href="#" className="nav-link">
-                {user?.role === 'librarian' ? 'Reservations' : 'My Books'}
-              </a>
+              <a href="#reservations" className="nav-link">Reservations</a>
             </li>
           </ul>
         </div>
