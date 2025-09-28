@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import './AuthForm.css'
+import { useAuth } from '../contexts/AuthContext'
 
 const LoginForm = () => {
+  const { login } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -52,14 +54,29 @@ const LoginForm = () => {
     setIsLoading(true)
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      const response = await login(formData.email, formData.password)
 
-      console.log('Login:', formData)
+      console.log('Login successful:', response)
       alert('Login successful!')
+
+      setFormData({
+        email: '',
+        password: ''
+      })
 
     } catch (error) {
       console.error('Login error:', error)
-      alert('Login failed. Please try again.')
+
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        setErrors({
+          email: 'Invalid email or password',
+          password: 'Invalid email or password'
+        })
+      } else if (error.message.includes('Network')) {
+        alert('Network error. Please check your connection.')
+      } else {
+        alert(`Login failed: ${error.message}`)
+      }
     } finally {
       setIsLoading(false)
     }
