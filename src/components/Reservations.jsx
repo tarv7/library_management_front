@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { reservationService } from '../services/reservationService';
 import { bookService } from '../services/bookService';
+import { userService } from '../services/userService';
 import BookCover from './BookCover';
 import './Reservations.css';
 
@@ -12,6 +13,7 @@ const Reservations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [books, setBooks] = useState([]);
+  const [members, setMembers] = useState([]);
   const [filters, setFilters] = useState({
     book_id: '',
     user_id: '',
@@ -29,6 +31,7 @@ const Reservations = () => {
   useEffect(() => {
     fetchReservations();
     fetchBooks();
+    fetchMembers();
   }, []);
 
   const fetchBooks = async () => {
@@ -37,10 +40,18 @@ const Reservations = () => {
       setBooks(data || []);
     } catch (error) {
       console.error('Error fetching books:', error);
+      // Don't set error state for books fetch, just log it
     }
   };
 
-  const fetchReservations = async (customFilters = filters) => {
+  const fetchMembers = async () => {
+    try {
+      const data = await userService.getMembers();
+      setMembers(data || []);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    }
+  };  const fetchReservations = async (customFilters = filters) => {
     try {
       setLoading(true);
       setError(null);
@@ -199,15 +210,19 @@ const Reservations = () => {
           </div>
 
           <div className="filter-group">
-            <label htmlFor="user-id-filter">User ID:</label>
-            <input
-              id="user-id-filter"
-              type="number"
-              placeholder="Enter user ID..."
+            <label htmlFor="user-filter">Member:</label>
+            <select
+              id="user-filter"
               value={filters.user_id}
               onChange={(e) => handleFilterChange('user_id', e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleApplyFilters()}
-            />
+            >
+              <option value="">All Members</option>
+              {members.map((member) => (
+                <option key={member.id} value={member.id} title={`${member.name} - ${member.email_address}`}>
+                  {truncateText(`${member.name} - ${member.email_address}`, 45)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="filter-group">
