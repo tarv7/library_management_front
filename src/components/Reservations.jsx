@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { reservationService } from '../services/reservationService';
+import { bookService } from '../services/bookService';
 import BookCover from './BookCover';
 import './Reservations.css';
 
@@ -10,6 +11,7 @@ const Reservations = () => {
   const [metadata, setMetadata] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [books, setBooks] = useState([]);
   const [filters, setFilters] = useState({
     book_id: '',
     user_id: '',
@@ -26,7 +28,17 @@ const Reservations = () => {
 
   useEffect(() => {
     fetchReservations();
+    fetchBooks();
   }, []);
+
+  const fetchBooks = async () => {
+    try {
+      const data = await bookService.getBooks();
+      setBooks(data || []);
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
 
   const fetchReservations = async (customFilters = filters) => {
     try {
@@ -72,6 +84,11 @@ const Reservations = () => {
 
   const formatGenre = (genre) => {
     return genre.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  const truncateText = (text, maxLength = 50) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
   };
 
   const getStatusColor = (status) => {
@@ -166,15 +183,19 @@ const Reservations = () => {
       <div className="reservations-filters">
         <div className="filters-row">
           <div className="filter-group">
-            <label htmlFor="book-id-filter">Book ID:</label>
-            <input
-              id="book-id-filter"
-              type="number"
-              placeholder="Enter book ID..."
+            <label htmlFor="book-filter">Book:</label>
+            <select
+              id="book-filter"
               value={filters.book_id}
               onChange={(e) => handleFilterChange('book_id', e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleApplyFilters()}
-            />
+            >
+              <option value="">All Books</option>
+              {books.map((book) => (
+                <option key={book.id} value={book.id} title={`${book.title} - ${book.author}`}>
+                  {truncateText(`${book.title} - ${book.author}`, 45)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="filter-group">

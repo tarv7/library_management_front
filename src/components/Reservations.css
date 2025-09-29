@@ -96,16 +96,19 @@
 }
 
 .filters-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
+  display: flex;
   gap: 1.5rem;
   align-items: end;
+  flex-wrap: wrap;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
 }
 
 .filter-group label {
@@ -122,6 +125,22 @@
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   background: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Truncate long text in select options */
+.filter-group select {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.filter-group select option {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .filter-group input:focus,
@@ -134,6 +153,8 @@
 .filter-actions {
   display: flex;
   gap: 0.5rem;
+  flex-shrink: 0;
+  align-self: end;
 }
 
 /* Buttons */
@@ -388,14 +409,19 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .filters-row {
-    grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
 
+  .filter-group {
+    min-width: 180px;
+    max-width: 250px;
+  }
+
   .filter-actions {
-    grid-column: span 2;
     justify-content: center;
     margin-top: 1rem;
+    width: 100%;
+    flex-basis: 100%;
   }
 }
 
@@ -417,11 +443,18 @@
   }
 
   .filters-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filter-group {
+    min-width: 100%;
+    max-width: 100%;
   }
 
   .filter-actions {
-    grid-column: span 1;
+    width: 100%;
+    justify-content: center;
   }
 
   .reservations-table-container {
