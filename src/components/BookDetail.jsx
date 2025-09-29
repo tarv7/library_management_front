@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { bookService } from '../services/bookService';
+import { reservationService } from '../services/reservationService';
 import BookCover from './BookCover';
 import './BookDetail.css';
 
@@ -9,6 +10,8 @@ const BookDetail = ({ bookId, onClose, onEdit }) => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [borrowLoading, setBorrowLoading] = useState(false);
+  const [borrowError, setBorrowError] = useState(null);
 
   useEffect(() => {
     if (bookId) {
@@ -42,6 +45,34 @@ const BookDetail = ({ bookId, onClose, onEdit }) => {
       onClose();
     } catch (error) {
       alert(`Error deleting book: ${error.message}`);
+    }
+  };
+
+  const handleBorrowBook = async () => {
+    if (!window.confirm(`Are you sure you want to borrow "${book.title}"?`)) {
+      return;
+    }
+
+    try {
+      setBorrowLoading(true);
+      setBorrowError(null);
+
+      const reservation = await reservationService.borrowBook(book.id);
+
+      const borrowedDate = new Date(reservation.borrowed_on).toLocaleDateString('en-US');
+      const dueDate = new Date(reservation.due_on).toLocaleDateString('en-US');
+
+      alert(`Book borrowed successfully!\nBorrowed: ${borrowedDate}\nDue: ${dueDate}`);
+      onClose();
+    } catch (error) {
+      if (error.status === 422) {
+        const bookErrors = error.errors.book || [];
+        setBorrowError(bookErrors.join('. '));
+      } else {
+        setBorrowError(error.message);
+      }
+    } finally {
+      setBorrowLoading(false);
     }
   };
 
@@ -173,15 +204,29 @@ const BookDetail = ({ bookId, onClose, onEdit }) => {
               </div>
             ) : (
               <div className="member-actions">
+                {borrowError && (
+                  <div className="borrow-error">
+                    {borrowError}
+                  </div>
+                )}
                 <button
                   className="btn-primary"
-                  onClick={() => alert(`Reserve functionality for: ${book.title}`)}
+                  onClick={handleBorrowBook}
+                  disabled={borrowLoading}
                 >
-                  📚 Reserve Book
+                  {borrowLoading ? (
+                    <>
+                      <span className="loading-spinner-inline"></span>
+                      Borrowing...
+                    </>
+                  ) : (
+                    '📚 Borrow Book'
+                  )}
                 </button>
                 <button
                   className="btn-secondary"
                   onClick={onClose}
+                  disabled={borrowLoading}
                 >
                   Close
                 </button>
