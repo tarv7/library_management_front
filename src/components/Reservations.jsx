@@ -89,6 +89,24 @@ const Reservations = () => {
     fetchReservations(clearedFilters);
   };
 
+  const handleReturnBook = async (bookId, reservationId, bookTitle, memberName) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to mark "${bookTitle}" as returned by ${memberName}?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await reservationService.returnBook(bookId, reservationId);
+      fetchReservations();
+    } catch (error) {
+      console.error('Error returning book:', error);
+      setError(error.message);
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US');
   };
@@ -312,7 +330,18 @@ const Reservations = () => {
                         {formatDate(reservation.returned_at)}
                       </span>
                     ) : (
-                      <span className="not-returned">Not returned</span>
+                      <button
+                        className="btn-return"
+                        onClick={() => handleReturnBook(
+                          reservation.book.id,
+                          reservation.id,
+                          reservation.book.title,
+                          reservation.user.name
+                        )}
+                        title="Mark book as returned"
+                      >
+                        📚 Return Book
+                      </button>
                     )}
                   </td>
                 </tr>
