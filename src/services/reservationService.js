@@ -29,5 +29,36 @@ export const reservationService = {
       console.error('Book borrow error:', error);
       throw error;
     }
+  },
+
+  async getReservations(filters = {}) {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters.book_id) queryParams.append('book_id', filters.book_id);
+      if (filters.user_id) queryParams.append('user_id', filters.user_id);
+      if (filters.situation) queryParams.append('situation', filters.situation);
+
+      const queryString = queryParams.toString();
+      const url = `${API_BASE_URL}/api/v1/reservations${queryString ? `?${queryString}` : ''}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: authService.getAuthHeaders(),
+        mode: 'cors',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Reservations fetch error:', error);
+      throw error;
+    }
   }
 };

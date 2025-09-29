@@ -3,6 +3,7 @@ import AuthPage from './pages/AuthPage'
 import Navbar from './components/Navbar'
 import Dashboard from './components/Dashboard'
 import Books from './components/Books'
+import Reservations from './components/Reservations'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import './App.css'
 
@@ -42,7 +43,7 @@ const AppContent = () => {
       case 'books':
         return <Books />
       case 'reservations':
-        return <div style={{padding: '2rem', textAlign: 'center'}}>Reservations page coming soon...</div>
+        return <Reservations />
       case 'members':
         return <div style={{padding: '2rem', textAlign: 'center'}}>Members page coming soon...</div>
       case 'dashboard':

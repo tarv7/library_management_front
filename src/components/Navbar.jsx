@@ -43,9 +43,11 @@ const Navbar = () => {
             <li className="nav-item">
               <a href="#books" className={isActive('books')}>Books</a>
             </li>
-            <li className="nav-item">
-              <a href="#reservations" className={isActive('reservations')}>Reservations</a>
-            </li>
+            {user?.role === 'librarian' && (
+              <li className="nav-item">
+                <a href="#reservations" className={isActive('reservations')}>Reservations</a>
+              </li>
+            )}
           </ul>
         </div>
 
